@@ -41,7 +41,7 @@ def line_svm(X_train, X_test, y_train, y_test, c):
     print(f"linear模型(C:{c})的准确率: {accuracy:.2f}")
     # 保存结果
     line_results.append({ "C": c, "Accuracy": accuracy})
-
+    return accuracy
 # 多项式核SVM函数
 def Poly_svm(X_train, X_test, y_train, y_test, d, co, c):
     svm_model = SVC(kernel='poly', degree=d, coef0=co, C=c)
@@ -51,7 +51,7 @@ def Poly_svm(X_train, X_test, y_train, y_test, d, co, c):
     print(f"Poly模型(C:{c}, degree:{d}, coef0:{co})的准确率: {accuracy:.2f}")
     # 保存结果
     poly_results.append({"C": c, "Degree": d, "Coef0": co, "Accuracy": accuracy})
-
+    return accuracy
 # RBF核SVM函数
 def Rbf_svm(X_train, X_test, y_train, y_test, c, g):
     svm_model = SVC(kernel='rbf', C=c, gamma=g)
@@ -61,73 +61,76 @@ def Rbf_svm(X_train, X_test, y_train, y_test, c, g):
     print(f"RBF模型(C:{c}, gamma:{g})的准确率: {accuracy:.2f}")
     # 保存结果
     rbf_results.append({ "C": c, "Gamma": g, "Accuracy": accuracy})
+    return accuracy
+# 线性SVM实验
+def linear_svm_experiment(X_train, X_test, y_train, y_test, C_values):
+        print("线性SVM实验：")
+        best_C = 0
+        best_accuracy = 0
+        for C in C_values:
+            accuracy = line_svm(X_train, X_test, y_train, y_test, C)
+            if accuracy > best_accuracy:
+                best_accuracy = accuracy
+                best_C = C
+        print(f"最优C值：{best_C}, 准确率：{best_accuracy}")
+        return best_C, best_accuracy
 
-# 调用示例
+    # 多项式SVM实验
+def poly_svm_experiment(X_train, X_test, y_train, y_test, degree_values, coef0_values, C_values):
+        print("\n多项式SVM实验：")
+        best_params = 0
+        best_accuracy = 0
+        for degree in degree_values:
+            for coef0 in coef0_values:
+                for C in C_values:
+                    accuracy = Poly_svm(X_train, X_test, y_train, y_test, degree, coef0, C)
+                    if accuracy > best_accuracy:
+                        best_accuracy = accuracy
+                        best_params = (degree, coef0, C)
+        print(f"最优参数：degree={best_params[0]}, coef0={best_params[1]}, C={best_params[2]}, 准确率：{best_accuracy}")
+        return best_params, best_accuracy
+
+    # RBF SVM实验
+def rbf_svm_experiment(X_train, X_test, y_train, y_test, C_values, gamma_values):
+        print("\nRBF SVM实验：")
+        best_params = 0
+        best_accuracy = 0
+        for C in C_values:
+            for gamma in gamma_values:
+                accuracy = Rbf_svm(X_train, X_test, y_train, y_test, C, gamma)
+                if accuracy > best_accuracy:
+                    best_accuracy = accuracy
+                    best_params = (C, gamma)
+        print(f"最优参数：C={best_params[0]}, gamma={best_params[1]}, 准确率：{best_accuracy}")
+        return best_params, best_accuracy
+
 def main():
     # 加载和处理数据
     x, y = load_data()
-    X_train, X_test, y_train, y_test = preprocess_data(x, y)
+    x_train, x_test, y_train, y_test = preprocess_data(x, y)
+    C_values = [1, 10, 100, 0.1, 50, 0.01]
+    degree_values = [2, 3, 4, 5]
+    coef0_values = [0, 1, 10]
+    gamma_values = [0.1, 1, 10, 100]
 
-    # 1. 线性SVM
-    print("线性SVM实验：")
-    line_svm(X_train, X_test, y_train, y_test, 1)
-    line_svm(X_train, X_test, y_train, y_test, 10)
-    line_svm(X_train, X_test, y_train, y_test, 100)
-    line_svm(X_train, X_test, y_train, y_test, 0.1)
-    line_svm(X_train, X_test, y_train, y_test, 50)
-    line_svm(X_train, X_test, y_train, y_test, 0.01)
-    line_svm(X_train, X_test, y_train, y_test, 200)
-    line_svm(X_train, X_test, y_train, y_test, 0.5)
-    line_svm(X_train, X_test, y_train, y_test, 5)
-    line_svm(X_train, X_test, y_train, y_test, 0.001)
-    line_svm(X_train, X_test, y_train, y_test, 1000)
-    line_svm(X_train, X_test, y_train, y_test, 20)
-    line_svm(X_train, X_test, y_train, y_test, 2)
-    line_svm(X_train, X_test, y_train, y_test, 0.05)
-    line_svm(X_train, X_test, y_train, y_test, 2000)
-    line_svm(X_train, X_test, y_train, y_test, 0.005)
-    line_svm(X_train, X_test, y_train, y_test, 500)
-    line_svm(X_train, X_test, y_train, y_test, 0.2)
-    line_svm(X_train, X_test, y_train, y_test, 0.25)
+    # 假设已经加载了数据：X_train, X_test, y_train, y_test
 
-    # 2. 多项式核SVM
-    print("\n多项式SVM实验：")
-    Poly_svm(X_train, X_test, y_train, y_test, 2, 0, 1)
-    Poly_svm(X_train, X_test, y_train, y_test, 3, 0, 1)
-    Poly_svm(X_train, X_test, y_train, y_test, 2, 1, 10)
-    Poly_svm(X_train, X_test, y_train, y_test, 5, 1, 0.1)
-    Poly_svm(X_train, X_test, y_train, y_test, 3, 1, 100)
-    Poly_svm(X_train, X_test, y_train, y_test, 2, 0, 100)
-    Poly_svm(X_train, X_test, y_train, y_test, 3, 0, 10)
-    Poly_svm(X_train, X_test, y_train, y_test, 4, 1, 1)
-    Poly_svm(X_train, X_test, y_train, y_test, 6, 0, 0.5)
-    Poly_svm(X_train, X_test, y_train, y_test, 3, 0, 0.5)
-    Poly_svm(X_train, X_test, y_train, y_test, 2, 1, 1)
-    Poly_svm(X_train, X_test, y_train, y_test, 4, 0, 50)
-    Poly_svm(X_train, X_test, y_train, y_test, 3, 1, 1)
-    Poly_svm(X_train, X_test, y_train, y_test, 5, 0, 10)
-    Poly_svm(X_train, X_test, y_train, y_test, 2, 1, 0.5)
-    Poly_svm(X_train, X_test, y_train, y_test, 5, 1, 1)
-    Poly_svm(X_train, X_test, y_train, y_test, 6, 0, 10)
-    Poly_svm(X_train, X_test, y_train, y_test, 4, 1, 0.1)
-    Poly_svm(X_train, X_test, y_train, y_test, 3, 0, 0.1)
-    Poly_svm(X_train, X_test, y_train, y_test, 8, 0, 1)
-    Poly_svm(X_train, X_test, y_train, y_test, 1, 0, 1)
-    Poly_svm(X_train, X_test, y_train, y_test, 8, 1, 1)
-    Poly_svm(X_train, X_test, y_train, y_test, 1, 1, 1)
+    # 进行线性SVM实验
+    best_C, best_accuracy_linear = linear_svm_experiment(x_train, x_test, y_train, y_test, C_values)
 
-    # 3. RBF核SVM
-    print("\nRBF SVM实验：")
-    Rbf_svm(X_train, X_test, y_train, y_test, 1, 0.1)
-    Rbf_svm(X_train, X_test, y_train, y_test, 10, 0.1)
-    Rbf_svm(X_train, X_test, y_train, y_test, 100, 0.1)
-    Rbf_svm(X_train, X_test, y_train, y_test, 1, 1)
-    Rbf_svm(X_train, X_test, y_train, y_test, 10, 1)
-    Rbf_svm(X_train, X_test, y_train, y_test, 0.1, 0.1)
-    Rbf_svm(X_train, X_test, y_train, y_test, 50, 0.5)
-    Rbf_svm(X_train, X_test, y_train, y_test, 0.1, 10)
-    Rbf_svm(X_train, X_test, y_train, y_test, 1000, 1)
-    Rbf_svm(X_train, X_test, y_train, y_test, 0.5, 0.01)
+    # 进行多项式SVM实验
+    best_params_poly, best_accuracy_poly = poly_svm_experiment(x_train, x_test, y_train, y_test, degree_values,
+                                                               coef0_values, C_values)
+
+    # 进行RBF SVM实验
+    best_params_rbf, best_accuracy_rbf = rbf_svm_experiment(x_train, x_test, y_train, y_test, C_values, gamma_values)
+
+    # 输出最终的最优参数和准确率
+    print("\n最优参数和准确率：")
+    print(f"线性SVM最优C值：{best_C}, 准确率：{best_accuracy_linear}")
+    print(
+        f"多项式SVM最优参数：degree={best_params_poly[0]}, coef0={best_params_poly[1]}, C={best_params_poly[2]}, 准确率：{best_accuracy_poly}")
+    print(f"RBF SVM最优参数：C={best_params_rbf[0]}, gamma={best_params_rbf[1]}, 准确率：{best_accuracy_rbf}")
 
     # 将每个结果保存到不同的CSV文件
     pd.DataFrame(line_results).to_csv('line_results.csv', index=False)
