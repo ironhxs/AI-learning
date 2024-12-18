@@ -1,9 +1,9 @@
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
-
+from keras.models import Sequential
+from keras.layers import Dense
 # 保存实验结果的列表
 line_results = []
 poly_results = []
@@ -104,16 +104,40 @@ def rbf_svm_experiment(X_train, X_test, y_train, y_test, C_values, gamma_values)
         print(f"最优参数：C={best_params[0]}, gamma={best_params[1]}, 准确率：{best_accuracy}")
         return best_params, best_accuracy
 
-def main():
+def nn(x_train, x_test, y_train, y_test):
+    # 构建神经网络模型
+    model = Sequential()
+
+    # 添加输入层和第一个隐藏层
+    model.add(Dense(units=128, activation='relu', input_dim=30))  # 30是特征数
+
+    # 添加第二个隐藏层
+    model.add(Dense(units=32, activation='relu'))
+
+    # 添加输出层
+    model.add(Dense(units=1, activation='sigmoid'))  # 二分类任务，输出0或1
+
+    # 编译模型
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+    # 训练模型
+    model.fit(x_train, y_train, epochs=50, batch_size=32, verbose=1)
+
+    # 在测试集上评估模型
+    y_pred = model.predict(x_test)
+    y_pred = (y_pred > 0.5)  # 将输出概率值转换为0或1
+
+    # 9. 输出分类准确率
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f'神经网络模型的准确率: {accuracy:.4f}')
+def test():
     # 加载和处理数据
     x, y = load_data()
     x_train, x_test, y_train, y_test = preprocess_data(x, y)
-    C_values = [1, 10, 100, 0.1, 50, 0.01]
-    degree_values = [2, 3, 4, 5]
-    coef0_values = [0, 1, 10]
-    gamma_values = [0.1, 1, 10, 100]
-
-    # 假设已经加载了数据：X_train, X_test, y_train, y_test
+    C_values = [0.001, 0.01, 0.1, 1, 10, 50, 100, 500, 1000]
+    degree_values = [1, 2, 3, 4, 5, 6]
+    coef0_values = [0, 0.5, 1, 5, 10, 50]
+    gamma_values = [0.001, 0.01, 0.1, 0.5, 1, 2, 5, 10, 50, 100]
 
     # 进行线性SVM实验
     best_C, best_accuracy_linear = linear_svm_experiment(x_train, x_test, y_train, y_test, C_values)
@@ -137,5 +161,9 @@ def main():
     pd.DataFrame(poly_results).to_csv('poly_results.csv', index=False)
     pd.DataFrame(rbf_results).to_csv('rbf_results.csv', index=False)
 
+def test2():
+    x, y = load_data()
+    x_train, x_test, y_train, y_test = preprocess_data(x, y)
+
 if __name__ == "__main__":
-    main()
+    test 2()
