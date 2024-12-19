@@ -23,6 +23,7 @@ line_results = []
 poly_results = []
 rbf_results = []
 decision_tree_results = []
+
 # 数据加载与预处理
 def load_data():
     # 假设csv数据已经加载
@@ -53,7 +54,7 @@ def line_svm(X_train, X_test, y_train, y_test, c):
     y_pred = svm_model.predict(X_test)
     train_accuracy = sklearn.metrics.accuracy_score(y_train, y_train_pred)
     accuracy = sklearn.metrics.accuracy_score(y_test, y_pred)
-    print(f"linear模型(C:{c})的准确率: {accuracy:.2f}")
+    print(f"linear模型(C:{c})的准确率: {accuracy:.9f}")
     # 保存结果
     line_results.append({ "C": c, "Accuracy": accuracy})
     return train_accuracy, accuracy
@@ -66,7 +67,7 @@ def Poly_svm(X_train, X_test, y_train, y_test, d, co, c):
     y_pred = svm_model.predict(X_test)
     train_accuracy = sklearn.metrics.accuracy_score(y_train, y_train_pred)
     accuracy = sklearn.metrics.accuracy_score(y_test, y_pred)
-    print(f"Poly模型(C:{c}, degree:{d}, coef0:{co})的准确率: {accuracy:.2f}")
+    print(f"Poly模型(C:{c}, degree:{d}, coef0:{co})的准确率: {accuracy:.9f}")
     # 保存结果
     poly_results.append({"C": c, "Degree": d, "Coef0": co, "Accuracy": accuracy})
     return train_accuracy, accuracy
@@ -79,7 +80,7 @@ def Rbf_svm(X_train, X_test, y_train, y_test, c, g):
     y_pred = svm_model.predict(X_test)
     train_accuracy = sklearn.metrics.accuracy_score(y_train, y_train_pred)
     accuracy = sklearn.metrics.accuracy_score(y_test, y_pred)
-    print(f"RBF模型(C:{c}, gamma:{g})的准确率: {accuracy:.2f}")
+    print(f"RBF模型(C:{c}, gamma:{g})的准确率: {accuracy:.9f}")
     # 保存结果
     rbf_results.append({ "C": c, "Gamma": g, "Accuracy": accuracy})
     return train_accuracy, accuracy
@@ -114,7 +115,7 @@ def nn(x_train, x_test, y_train, y_test):
     # 输出分类准确率
     train_accuracy = sklearn.metrics.accuracy_score(y_train, y_train_pred)
     accuracy = sklearn.metrics.accuracy_score(y_test, y_pred)
-    print(f'神经网络模型的准确率: {accuracy:.4f}')
+    print(f'神经网络模型的准确率: {accuracy:.9f}')
     return train_accuracy,  accuracy
 
 # 决策树函数
@@ -319,11 +320,11 @@ def evaluate_models(X_train, X_test, y_train, y_test):
 
     # 输出各模型的训练集和测试集准确率对比来直观检验是否过拟合
     print(f"\n模型的训练集和测试集准确率：")
-    print(f"线性SVM - 训练集: {line_train_acc:.4f}, 测试集: {line_test_acc:.4f}")
-    print(f"多项式SVM - 训练集: {poly_train_acc:.4f}, 测试集: {poly_test_acc:.4f}")
-    print(f"RBF SVM - 训练集: {rbf_train_acc:.4f}, 测试集: {rbf_test_acc:.4f}")
-    print(f"神经网络 - 训练集: {nn_train_acc:.4f}, 测试集: {nn_test_acc:.4f}")
-    print(f"决策树 - 训练集: {tree_train_acc:.4f}, 测试集: {tree_test_acc:.4f}")
+    print(f"线性SVM - 训练集: {line_train_acc:.9f}, 测试集: {line_test_acc:.9f}")
+    print(f"多项式SVM - 训练集: {poly_train_acc:.9f}, 测试集: {poly_test_acc:.9f}")
+    print(f"RBF SVM - 训练集: {rbf_train_acc:.9f}, 测试集: {rbf_test_acc:.9f}")
+    print(f"神经网络 - 训练集: {nn_train_acc:.9f}, 测试集: {nn_test_acc:.9f}")
+    print(f"决策树 - 训练集: {tree_train_acc:.9f}, 测试集: {tree_test_acc:.9f}")
 
 #测试各个svm的函数
 def test():
